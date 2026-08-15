@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build
+dist/
+build/
+.next/
+out/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data
+/data/
+/storage/
+*.log
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+coverage/
+
+# Docker
+docker-compose.override.yml
+
+# Alembic
+# Keep migrations tracked
+
+# Misc
+*.pem
+*.key
+!traefik/*.key
