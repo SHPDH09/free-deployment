@@ -45,6 +45,12 @@ GitHub → Webhook → API Server → Redis Queue → Build Workers
 
 ## Quick Start (Local)
 
+### Vercel deploy (easy — no AWS)
+
+See **[docs/VERCEL-DEPLOY.md](docs/VERCEL-DEPLOY.md)** — Next.js + Prisma + Neon, deploy in 5 minutes.
+
+### Local / Docker (full platform with Docker workers)
+
 ### Prerequisites
 
 - Docker & Docker Compose

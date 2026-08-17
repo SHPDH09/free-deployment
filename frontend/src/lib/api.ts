@@ -1,4 +1,8 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+function getApiBase(): string {
+  const base = process.env.NEXT_PUBLIC_API_URL;
+  if (base) return `${base.replace(/\/$/, "")}/api`;
+  return "/api";
+}
 
 export interface ApiResponse<T> {
   data: T;
@@ -33,7 +37,7 @@ class ApiClient {
     };
     if (token) headers["Authorization"] = `Bearer ${token}`;
 
-    const response = await fetch(`${API_URL}/api${path}`, {
+    const response = await fetch(`${getApiBase()}${path}`, {
       ...options,
       headers,
     });

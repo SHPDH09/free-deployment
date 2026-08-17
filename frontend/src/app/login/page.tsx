@@ -14,9 +14,7 @@ export default function LoginPage() {
 
   const handleGitHubLogin = async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/auth/github`
-      );
+      const res = await fetch("/api/auth/github");
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;

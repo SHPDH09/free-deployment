@@ -15,8 +15,7 @@ export default function AuthCallbackPage() {
       return;
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    fetch(`${apiUrl}/api/auth/github/callback?code=${encodeURIComponent(code)}`, {
+    fetch(`/api/auth/github/callback?code=${encodeURIComponent(code)}`, {
       method: "POST",
     })
       .then(async (res) => {
