@@ -15,7 +15,8 @@ fi
 ln -sf /workspace/.env backend/.env 2>/dev/null || cp /workspace/.env backend/.env
 ln -sf /workspace/.env worker/.env 2>/dev/null || cp /workspace/.env worker/.env
 
-python3 -m venv .venv
+rm -rf /workspace/.venv
+python3 -m venv /workspace/.venv
 # shellcheck disable=SC1091
 source .venv/bin/activate
 pip install --upgrade pip
