@@ -3,6 +3,8 @@ version: "3.8"
 services:
   postgres:
     image: postgres:16-alpine
+    profiles:
+      - local-db
     environment:
       POSTGRES_USER: deploy
       POSTGRES_PASSWORD: deploy
@@ -41,8 +43,8 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+asyncpg://deploy:deploy@postgres:5432/deploystack
-      DATABASE_URL_SYNC: postgresql://deploy:deploy@postgres:5432/deploystack
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://deploy:deploy@postgres:5432/deploystack}
+      DATABASE_URL_SYNC: ${DATABASE_URL_SYNC:-postgresql://deploy:deploy@postgres:5432/deploystack}
       REDIS_URL: redis://redis:6379/0
     volumes:
       - artifacts_data:/data/artifacts
@@ -52,8 +54,6 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
     networks:
@@ -72,7 +72,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL_SYNC: postgresql://deploy:deploy@postgres:5432/deploystack
+      DATABASE_URL_SYNC: ${DATABASE_URL_SYNC:-postgresql://deploy:deploy@postgres:5432/deploystack}
       REDIS_URL: redis://redis:6379/0
       TRAEFIK_DYNAMIC_PATH: /traefik/dynamic/deployments.json
     volumes:
@@ -82,8 +82,6 @@ services:
       - ./traefik/dynamic:/traefik/dynamic
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
       api:
