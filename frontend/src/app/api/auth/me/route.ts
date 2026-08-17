@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserFromRequest } from "@/lib/get-user";
+import { getUserFromRequest } from "@/lib/server-utils";
 
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req);

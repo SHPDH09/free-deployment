@@ -1,90 +1,91 @@
-# Vercel par Deploy (Python nahi — sirf Next.js + TypeScript)
+# Vercel Deploy — DeployStack (100% Vercel)
 
-DeployStack ab **Vercel-ready** stack use karta hai:
-
-| Layer | Tech |
-|-------|------|
-| Frontend + API | **Next.js 14** (TypeScript) |
-| Database | **PostgreSQL** (Neon / Vercel Postgres) |
-| ORM | **Prisma** |
-| Auth | **JWT + GitHub OAuth** |
-| Hosting | **Vercel** |
-
-Python / FastAPI / Docker worker — **Vercel deploy ke liye zaroori nahi**.
+Poora platform **sirf Vercel + Neon** par chalta hai. Python / AWS / Docker **nahi chahiye**.
 
 ---
 
-## 5 minute Vercel deploy
+## Step 1: Neon database (2 min)
 
-### 1. Database (free) — Neon
+1. https://neon.tech → Sign up (free)
+2. Create project → **Connection string** copy
+3. Example:
+   ```text
+   postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require
+   ```
 
-1. [neon.tech](https://neon.tech) → sign up  
-2. New project → copy **connection string**  
-3. Example: `postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/neondb?sslmode=require`
+---
 
-### 2. Vercel
+## Step 2: Vercel import (2 min)
 
-1. [vercel.com/new](https://vercel.com/new)  
-2. Import **GitHub repo** `free-deployment`  
-3. **Root Directory:** `frontend`  
-4. Framework: Next.js (auto)
+1. https://vercel.com/new
+2. Import GitHub repo: **SHPDH09/free-deployment**
+3. Branch: `cursor/deployment-platform-9c59`
+4. **Root Directory:** `frontend` ← zaroori
+5. Framework: Next.js (auto detect)
 
-### 3. Environment Variables (Vercel dashboard)
+---
 
-| Variable | Value |
-|----------|--------|
+## Step 3: Environment Variables
+
+Vercel project → Settings → Environment Variables:
+
+| Key | Value |
+|-----|--------|
 | `DATABASE_URL` | Neon connection string |
-| `SECRET_KEY` | random 32+ chars |
-| `GITHUB_CLIENT_ID` | GitHub OAuth |
-| `GITHUB_CLIENT_SECRET` | GitHub OAuth |
-| `GITHUB_CALLBACK_URL` | `https://YOUR-APP.vercel.app/auth/callback` |
-| `ADMIN_EMAIL` | your email |
+| `SECRET_KEY` | random 32+ characters |
+| `GITHUB_CLIENT_ID` | from GitHub OAuth App |
+| `GITHUB_CLIENT_SECRET` | from GitHub OAuth App |
+| `GITHUB_CALLBACK_URL` | `https://YOUR-PROJECT.vercel.app/auth/callback` |
+| `ADMIN_EMAIL` | your GitHub email (admin access) |
 
-`NEXT_PUBLIC_API_URL` — **mat set karo** (same-origin `/api` use hoga).
-
-### 4. GitHub OAuth App
-
-- Callback: `https://YOUR-APP.vercel.app/auth/callback`
-
-### 5. Deploy
-
-Vercel **Deploy** → `prisma db push` tables banayega → site live.
+**Do NOT set** `NEXT_PUBLIC_API_URL` — app uses `/api` on same domain.
 
 ---
 
-## Flow (Vercel jaisa)
+## Step 4: GitHub OAuth App
 
-```text
-GitHub repo → Vercel import → Dashboard live
-Dashboard → Connect GitHub → New Project → Deploy
-```
+https://github.com/settings/applications/new
 
----
+| Field | Value |
+|-------|--------|
+| Homepage URL | `https://YOUR-PROJECT.vercel.app` |
+| Callback URL | `https://YOUR-PROJECT.vercel.app/auth/callback` |
 
-## Kya Vercel par chalta / nahi
-
-| Feature | Vercel |
-|---------|--------|
-| Dashboard | ✅ |
-| GitHub login | ✅ |
-| Projects list/create | ✅ |
-| PostgreSQL (Neon) | ✅ |
-| Docker build workers | ❌ (Vercel limitation) |
-| Custom Traefik domains | ❌ |
-
-Docker builds chahiye to **Railway worker** alag se — ya customer sites direct **Vercel** par deploy karo.
+Copy Client ID + Secret → Vercel env vars.
 
 ---
 
-## Local test
+## Step 5: Deploy
 
-```bash
-cd frontend
-cp .env.example .env.local
-# DATABASE_URL=neon or local postgres
-npm install
-npx prisma db push
-npm run dev
-```
+Click **Deploy** → wait 2–3 min → open URL.
 
-Open http://localhost:3000
+Test: `https://YOUR-PROJECT.vercel.app/api/health`
+
+---
+
+## Use karo
+
+1. Open your Vercel URL
+2. **Continue with GitHub**
+3. **New Project** → repo select → **Create & Deploy**
+4. Dashboard, deployments, logs — sab kaam karega
+
+---
+
+## Troubleshooting
+
+| Problem | Fix |
+|---------|-----|
+| Build fails on prisma | `DATABASE_URL` set in Vercel env |
+| GitHub login fail | Callback URL exact match |
+| 401 on dashboard | Login again |
+| Admin panel | Set `ADMIN_EMAIL` to your GitHub email |
+
+---
+
+## Tech stack on Vercel
+
+- Next.js 14 + TypeScript
+- Prisma + PostgreSQL (Neon)
+- API routes (no Python)
+- JWT + GitHub OAuth

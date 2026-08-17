@@ -16,28 +16,13 @@ export default function DeploymentDetailPage() {
   const [logs, setLogs] = useState<DeploymentLog[]>([]);
 
   useEffect(() => {
-    api.get<{ data: Deployment }>(`/deployments/${deploymentId}`).then((res) => setDeployment(res.data));
-    api.get<{ data: DeploymentLog[] }>(`/deployments/${deploymentId}/logs`).then((res) => setLogs(res.data));
-
-    const token = localStorage.getItem("access_token");
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    const ws = new WebSocket(`${apiUrl.replace("http", "ws")}/api/deployments/${deploymentId}/logs/stream?token=${token}`);
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setLogs((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          level: data.level,
-          message: data.message,
-          step: data.step,
-          created_at: data.timestamp,
-        },
-      ]);
+    const load = () => {
+      api.get<{ data: Deployment }>(`/deployments/${deploymentId}`).then((res) => setDeployment(res.data));
+      api.get<{ data: DeploymentLog[] }>(`/deployments/${deploymentId}/logs`).then((res) => setLogs(res.data));
     };
-
-    return () => ws.close();
+    load();
+    const interval = setInterval(load, 3000);
+    return () => clearInterval(interval);
   }, [deploymentId]);
 
   if (!deployment) {
@@ -82,10 +67,12 @@ export default function DeploymentDetailPage() {
                   <span className="text-slate-600 shrink-0">
                     [{new Date(log.created_at).toLocaleTimeString()}]
                   </span>
-                  <span className={
-                    log.level === "error" ? "text-red-400" :
-                    log.level === "warning" ? "text-amber-400" : "text-slate-300"
-                  }>
+                  <span
+                    className={
+                      log.level === "error" ? "text-red-400" :
+                      log.level === "warning" ? "text-amber-400" : "text-slate-300"
+                    }
+                  >
                     {log.message}
                   </span>
                 </div>
